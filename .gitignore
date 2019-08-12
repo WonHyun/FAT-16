@@ -1,0 +1,5 @@
+x64/
+fat/*.o
+fat/*.bin
+fat/*.map
+fat/*.axf

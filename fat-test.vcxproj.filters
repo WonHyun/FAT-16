@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="fat\Graphics.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="fat\Key.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="fat\Led.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="fat\Main.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="fat\mmu.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="fat\runtime.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="fat\Sdi.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="fat\Uart.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="fat\Wdt.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="fat\2440addr.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="fat\2440slib.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="fat\device_driver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="fat\ENG8X16.H">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="fat\HAN16X16.H">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="fat\HANTABLE.H">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="fat\img01.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="fat\macro.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="fat\option.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="fat\Image\img01.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="fat\Image\img02.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="fat\Image\img03.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="fat\Image\img04.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
