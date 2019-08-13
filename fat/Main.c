@@ -268,9 +268,11 @@ void main(void)
 
 #if 01
 		SD_Read_Sector(0, 1, (U8*)buf);
-
+		//sector_printf(buf);
 		/* MBR에서 parameter.lba_start 값을 읽어서 저장한다 */
 		parameter.lba_start = ((MBR*)buf)->part[0].LBA_Start;
+		//parameter.lba_start = ((char*)buf)[454] + (((char*)buf)[455]<<8)
+		//		+ (((char*)buf)[456]<<16) + (((char*)buf)[457]<<24);
 
 		printf("LBA_Start = %d\n", parameter.lba_start);
 
@@ -278,7 +280,7 @@ void main(void)
 
 #if 01
 		SD_Read_Sector(parameter.lba_start, 1, (U8*)buf);
-
+		//sector_printf(buf);
 		/* BR에서 정보들을 읽어서 parameter 구조체 멤버들에 저장한다 */
 		parameter.byte_per_sector = ((BR*)buf)->bytepersector;
 		parameter.sector_per_cluster = ((BR*)buf)->sectorpercluster;
@@ -295,16 +297,13 @@ void main(void)
 		printf("file_start = %d\n", parameter.file_start);
 
 #endif
-
 		for (;;)
 		{
 			ENTRY* file;
 			int num;
 			int r;
-
 #if 01
 			/* ROOT 분석 & 파일 인쇄 */
-
 			listing_file();
 
 			printf("File Number(Exit => 999)? ");
@@ -315,9 +314,7 @@ void main(void)
 			if (num == 999) break;
 
 			/* 원하는 번호의 파일 탐색 */
-
 			file = search_file(num);
-
 			if ((file == (ENTRY*)0))
 			{
 				printf("Not Supported File\n");
@@ -325,7 +322,6 @@ void main(void)
 			}
 
 			/* 제대로 탐색되었는지 확인하기 위한 이름 인쇄 */
-
 			for (i = 0; i < 8; i++) printf("%c", ((char*)file)[i]);
 			printf(".");
 			for (i = 8; i < (8 + 3); i++) printf("%c", ((char*)file)[i]);
@@ -335,25 +331,22 @@ void main(void)
 
 #if 01
 			/* C, TXT, BMP 파일인지 확인 */
-
 			r = check_file_type(file);
-
 			printf("File Type = %d\n", r);
-
 #endif
 
-#if 0
+#if 01
 			if (r != 0)
 			{
 				char* data;
-				int size = file->size;
+				int size = file->filesize;
 
 				/* 파일 크기를 초과하는 섹터 단위의 메모리로 할당을 받아야 한다 */
-				num =
-					data = malloc(num);
+				num = size + parameter.byte_per_sector;
+				//num = (size + parameter.byte_per_sector-1) & ~(parameter.byte_per_sector-1);
+				data = malloc(num);
 
 				/* 파일 데이터 읽기 */
-
 				read_file(file, data);
 
 				switch (r)
@@ -373,20 +366,16 @@ void main(void)
 
 				free(data);
 			}
-
 			else printf("Not Supported File\n");
-
 #endif
-
 		}
-
 		printf("BYE!\n");
 	}
 }
 
 static void entryprint(int num, ENTRY* buf) {
 	int i;
-	printf("[%3d] ", num);
+	printf("[%03d] ", num);
 	for (i = 0; i < 8; i++) printf("%c", buf->name[i]);
 	printf(".");
 	for (i = 8; i < 11; i++) printf("%c", buf->name[i]);
@@ -470,9 +459,38 @@ static int check_file_type(ENTRY* file)
 }
 
 static void read_file(ENTRY* file, void* data)
-{
-	/* 주어진 Entry의 실제 데이터를 읽어서 data 주소에 저장한다 */
-
+{/* 주어진 Entry의 실제 데이터를 읽어서 data 주소에 저장한다 */
+	U16* fatbuf = malloc(parameter.byte_per_sector);
+	int prefatsecoffset = -1;//이전에 읽은 fat 테이블 offset(초기값 올수없는 값, 최초는 읽어야 하므로)
+	int curfatsecoffset;//현재 읽어야 하는 fat 테이블 offset
+	int nextclusternum = file->firstclusterlow;//다음에 읽을 cluster 번호
+	int curclusternum;//현재 읽어야할 cluster 번호
+	int addrsec;
+	int size = file->filesize;//읽어야할 파일 크기
+	U8* databuf = data;//저장할 주소
+	int i, cnt;
+	while (nextclusternum != 0xFFFF) {
+		curclusternum = nextclusternum;
+		curfatsecoffset = curclusternum / (parameter.byte_per_sector / 2);//시작 클러스터 번호에 해당하는 섹터
+		if (prefatsecoffset != curfatsecoffset) {//다른 섹터면 읽어야 함
+			prefatsecoffset = curfatsecoffset;
+			SD_Read_Sector(parameter.fat0_start + curfatsecoffset, 1, (U8*)fatbuf);
+		}
+		nextclusternum = fatbuf[curclusternum % (parameter.byte_per_sector / 2)];
+		if (nextclusternum == 0xFFFF) {//마지막 cluster 는 잔량만 읽기
+			cnt = (size + parameter.byte_per_sector - 1) / parameter.byte_per_sector;
+		}
+		else {
+			cnt = parameter.sector_per_cluster;
+		}
+		addrsec = parameter.file_start + (parameter.sector_per_cluster * (curclusternum - 2));
+		for (i = 0; i < cnt; i++) {
+			SD_Read_Sector(addrsec + i, 1, databuf);
+			databuf += parameter.byte_per_sector;//주소 증가
+			size -= parameter.byte_per_sector;//크기 감소
+		}
+	}
+	free(fatbuf);
 }
 
 #endif
