@@ -56,6 +56,7 @@ extern int Key_Wait_Key_Pressed(void);
 extern int SD_Check_Card(void);
 extern int SD_Init(void);
 extern int SD_Read_Sector(U32 SecAddr, U32 blocks , U8 * buf);
+extern int SD_Write_Sector(U32 SecAddr, U32 blocks, U8 * buf);
 
 #define SD_SUCCESS			0
 #define SD_NO_CARD			1
